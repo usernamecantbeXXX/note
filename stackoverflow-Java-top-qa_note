@@ -1,0 +1,67 @@
+	写博客,作为学习笔记
+	
+ 	(stackoverflow-Java-top-qa学习)
+	
+	去掉烦人的“!=null"(判空语句)
+	https://github.com/giantray/stackoverflow-java-top-qa/blob/master/contents/avoiding-null-statements-in-java.md
+	
+	工作中,接口参数有很多的情况下,参数空值判断就会很繁琐,会出现多个if(xxx==null){/*doSomething*/}的代码...
+	
+	貌似这文章说的方式我也用不上....
+	
+	文章意思是用空的Object代替null;例如Action a = new Action();
+	然后返回a ,而不是返回null,这样在调用Action的方法时就不会出现nullPointException
+	
+	以下是我理解后写的代码 
+	
+	/************************************************************************************************************************/
+
+		/**
+		 * Created by Saxon Xu on 2016/11/9.
+		 */
+		public class Test {
+
+			public static void main(String[] args) {
+
+				//fault:这段运行就会包空指针异常
+		//        new FParser().findAction("").doSomething();
+
+				//ok:这段就不会
+				new MyParser().findAction("sss").doSomething();
+			}
+		}
+
+		interface Action {
+			void doSomething();
+		}
+
+		interface Parser {
+			Action findAction(String userInput);
+		}
+
+		class FParser implements Parser{
+			//null
+			@Override
+			public Action findAction(String userInput) {
+				return null;
+			}
+		}
+
+		class MyParser implements Parser{
+			//空的Action1
+			private static Action DO_NOTHING = new Action() {
+				@Override
+				public void doSomething() {
+
+				}
+			};
+			@Override
+			public Action findAction(String userInput) {
+				//数据库找,找不到,返回null
+				if (false){
+					return DO_NOTHING;
+				}else {
+					return DO_NOTHING;
+				}
+			}
+		}
